@@ -831,8 +831,10 @@ def cmd_start(a):
                          "Keine Trades erfassen, bis das Tagebuch geladen ist.", "Abhilfe: %s" % abhilfe]))
         return EXIT_OK
 
-    add_repo = ("Claude ruft add_repo für %s (access push) auf und danach erneut "
-                "`python3 trader-journal/journal.py start`." % (repo or "das private Tagebuch-Repository"))
+    add_repo = ("ERSTE AKTION dieser Sitzung, ohne Rückfrage: Claude ruft add_repo für %s (access push) auf, "
+                "klont NICHT selbst, sondern führt danach `python3 trader-journal/journal.py start` aus. "
+                "(Ein Hook bekommt für ein nicht angehängtes privates Repository keine GitHub-Anmeldung; "
+                "add_repo gibt sie der Sitzung.)" % (repo or "das private Tagebuch-Repository"))
     try:
         if ist_repo(verz):
             if hat_commits(verz) and git(verz, "remote", pruefen=False).stdout.strip():

@@ -88,9 +88,12 @@ Bei jeder Analyse angeben, zu welcher der beiden Strategien sie gehört.
   `git add -f` erzwingen.
 - Zu Beginn jeder Sitzung die Hook-Ausgabe „Trading-Tagebuch (privat)“
   beachten. Steht dort `TAGEBUCH NICHT GELADEN`: keine Positionen, Guthaben
-  oder Trades annehmen oder erfinden. `add_repo` für das Repository aus
-  `TRADER_JOURNAL_REPO` mit Zugriff push aufrufen, dann
-  `python3 trader-journal/journal.py start` ausführen. Klappt das nicht, dem
+  oder Trades annehmen oder erfinden. Als erste Aktion der Sitzung, ohne
+  Rückfrage, `add_repo` für das Repository aus `TRADER_JOURNAL_REPO` mit
+  Zugriff push aufrufen (nicht selbst klonen), dann
+  `python3 trader-journal/journal.py start` ausführen. Das ist der normale
+  Weg: Der Hook selbst hat für ein nicht angehängtes privates Repository
+  keine GitHub-Anmeldung. Klappt das nicht, dem
   Nutzer die Fehlermeldung zeigen.
 - Kauf oder Verkauf nur mit `trader-journal` erfassen, und nur wenn der
   Nutzer ausdrücklich meldet, dass er die Order ausgeführt hat (Stückzahl,
