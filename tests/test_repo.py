@@ -40,7 +40,21 @@ class Repo(unittest.TestCase):
 
     def test_root_matches_the_reel(self):
         root = sorted(d for d in os.listdir(ROOT) if not d.startswith(".git"))
-        self.assertEqual(root, sorted([".claude-plugin", "LICENSE", "README.md", "tests"] + SKILLS))
+        # Fork: .claude/ (installed skills) and CLAUDE.md (project rules) are added.
+        self.assertEqual(root, sorted([".claude", ".claude-plugin", "CLAUDE.md", "LICENSE",
+                                       "README.md", "tests"] + SKILLS))
+
+    def test_installed_skills_match_the_source(self):
+        # Fork: .claude/skills/ holds copies of the eleven skills; they must not drift.
+        installed = os.path.join(ROOT, ".claude", "skills")
+        self.assertEqual(sorted(os.listdir(installed)), sorted(SKILLS))
+        for s in SKILLS:
+            src, dst = os.path.join(ROOT, s), os.path.join(installed, s)
+            names = sorted(f for f in os.listdir(src) if f != "__pycache__")
+            self.assertEqual(sorted(f for f in os.listdir(dst) if f != "__pycache__"), names, s)
+            for f in names:
+                with open(os.path.join(src, f), "rb") as a, open(os.path.join(dst, f), "rb") as b:
+                    self.assertEqual(a.read(), b.read(), "%s/%s differs" % (s, f))
 
     def test_frontmatter_name_and_description(self):
         for s in SKILLS:
