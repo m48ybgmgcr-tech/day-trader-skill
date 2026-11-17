@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 # Persönliche Arbeitsdaten der Skills (Trades, Konfiguration) – Repo ist öffentlich
 trader/
+# Ohne Schrägstrich: deckt auch den Symlink trader -> privates Tagebuch ab
+trader

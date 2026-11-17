@@ -14,6 +14,9 @@ ABOUT = ("11 Claude skills for day trading: scan thousands of charts, track brea
 # skills on the way to an order carry the safety block
 ORDER_PATH = ["trader-scanner", "trader-entry", "trader-exit", "trader-timemachine", "trader-budget",
               "trader-pelosi", "trader-risk", "trader-broker", "trader-alerts"]
+# Fork: zusaetzliches Werkzeug (Trading-Tagebuch, Daten im privaten Repository)
+FORK_SKILLS = ["trader-journal"]
+ALL_SKILLS = SKILLS + FORK_SKILLS
 V1_ONLY = ["trader-copycat", "trader-screener", "trader-tax", "trader-rebalance"]
 
 
@@ -36,19 +39,19 @@ class Repo(unittest.TestCase):
     def test_eleven_skill_folders_at_the_root(self):
         found = sorted(d for d in os.listdir(ROOT)
                        if os.path.isfile(os.path.join(ROOT, d, "SKILL.md")))
-        self.assertEqual(found, sorted(SKILLS))
+        self.assertEqual(found, sorted(ALL_SKILLS))
 
     def test_root_matches_the_reel(self):
         root = sorted(d for d in os.listdir(ROOT) if not d.startswith(".git"))
         # Fork: .claude/ (installed skills) and CLAUDE.md (project rules) are added.
         self.assertEqual(root, sorted([".claude", ".claude-plugin", "CLAUDE.md", "LICENSE",
-                                       "README.md", "tests"] + SKILLS))
+                                       "README.md", "tests"] + ALL_SKILLS))
 
     def test_installed_skills_match_the_source(self):
         # Fork: .claude/skills/ holds copies of the eleven skills; they must not drift.
         installed = os.path.join(ROOT, ".claude", "skills")
-        self.assertEqual(sorted(os.listdir(installed)), sorted(SKILLS))
-        for s in SKILLS:
+        self.assertEqual(sorted(os.listdir(installed)), sorted(ALL_SKILLS))
+        for s in ALL_SKILLS:
             src, dst = os.path.join(ROOT, s), os.path.join(installed, s)
             names = sorted(f for f in os.listdir(src) if f != "__pycache__")
             self.assertEqual(sorted(f for f in os.listdir(dst) if f != "__pycache__"), names, s)
@@ -57,7 +60,7 @@ class Repo(unittest.TestCase):
                     self.assertEqual(a.read(), b.read(), "%s/%s differs" % (s, f))
 
     def test_frontmatter_name_and_description(self):
-        for s in SKILLS:
+        for s in ALL_SKILLS:
             fm, text = frontmatter(os.path.join(ROOT, s, "SKILL.md"))
             self.assertIn("name: %s\n" % s, fm + "\n", s)
             self.assertRegex(fm, r"description: ", s)
@@ -116,7 +119,7 @@ class Repo(unittest.TestCase):
 
     def test_every_tool_runs_on_python_3_8(self):
         # no 3.9+ only modules or syntax in the tools (the README promises 3.8)
-        for s in SKILLS:
+        for s in ALL_SKILLS:
             folder = os.path.join(ROOT, s)
             for f in os.listdir(folder):
                 if not f.endswith(".py"):

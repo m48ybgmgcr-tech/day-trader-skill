@@ -2,7 +2,7 @@
 
 Dieses Repository ist ein Fork des Day-Trader-Skill-Pakets. Die elf Skills
 liegen unter `.claude/skills/trader-*` und werden automatisch ausgewählt und
-kombiniert. Die Originalordner `trader-*/` im Wurzelverzeichnis sind die
+kombiniert. Dazu kommt im Fork `trader-journal` (Trading-Tagebuch, siehe unten). Die Originalordner `trader-*/` im Wurzelverzeichnis sind die
 Quelle, gegen die die Tests in `tests/` laufen. Ändert sich dort etwas, die
 Kopien unter `.claude/skills/` mit aktualisieren.
 
@@ -78,3 +78,28 @@ Bei jeder Analyse angeben, zu welcher der beiden Strategien sie gehört.
 - Arbeitsdaten der Skills landen in `trader/`. Persönliche Daten (Trades,
   E-Mail für SEC) nicht ungefragt committen: das Repository ist öffentlich.
 - Netzwerkfreigaben der Umgebung nie ohne Zustimmung des Nutzers ändern.
+
+## Trading-Tagebuch (privat)
+
+- Echte Trades, Einstellungen und Arbeitsstände liegen **nur** im privaten
+  Repository aus der Umgebungsvariable `TRADER_JOURNAL_REPO`. Der
+  SessionStart-Hook klont es nach `../trading-journal` und verlinkt `trader/`
+  dorthin. `trader` ist hier per `.gitignore` ausgeschlossen; nie mit
+  `git add -f` erzwingen.
+- Zu Beginn jeder Sitzung die Hook-Ausgabe „Trading-Tagebuch (privat)“
+  beachten. Steht dort `TAGEBUCH NICHT GELADEN`: keine Positionen, Guthaben
+  oder Trades annehmen oder erfinden. `add_repo` für das Repository aus
+  `TRADER_JOURNAL_REPO` mit Zugriff push aufrufen, dann
+  `python3 trader-journal/journal.py start` ausführen. Klappt das nicht, dem
+  Nutzer die Fehlermeldung zeigen.
+- Kauf oder Verkauf nur mit `trader-journal` erfassen, und nur wenn der
+  Nutzer ausdrücklich meldet, dass er die Order ausgeführt hat (Stückzahl,
+  Kurs in Euro, Gebühren, Strategie). Fehlende Angaben erfragen.
+- Eine Speicherung erst nach `Gespeichert ✓ auf GitHub` bestätigen. Bei
+  Exit-Code 4 (nur lokal) oder 5 (Konflikt) den Nutzer sofort warnen. Nie
+  Force-Push, nie `reset --hard`, nie Zeilen des Tagebuchs löschen oder
+  ändern; Korrekturen nur per `storno`.
+- Testdaten nur mit `--fiktiv` und nie auf dem Zweig `main` des privaten
+  Repositorys.
+- Das freie Kapital aus `journal.py status` ist die Obergrenze für neue Käufe
+  über beide Strategien (Budget 500 €).
